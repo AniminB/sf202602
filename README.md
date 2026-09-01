@@ -14,7 +14,9 @@
 
 ## Grading(tentative)
 
-TBA
+- Attendance: 5%
+- Midterm: 45%
+- Final: 50%
 
 ## Announcements
 
