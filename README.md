@@ -20,11 +20,16 @@
 
 ## Announcements
 
-TBA
+- Oct. 6:
+    + Assignments 1, 2, 3 are uploaded.
+    + Midterm exam will be held in Oct. 31th. Please check instructions through [this page](exam/midterm/README.md).
 
-## Assignments
+## Assignments (optional)
 
-TBA
+- Download skeleton code and replace `FILL_IN_HERE` with your code in P**.v.
+- Each assignment have forbidden keyword in forbidden.txt. Try not to use those keywords.
+- We will not be grading assignments - feel free to complete them and test your understanding about the materials dealt in the classes.
+- Consult to the TA if you have any questions.
 
 ## Rocq (Coq)
 
