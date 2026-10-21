@@ -1,0 +1,12 @@
+1. Semantics
+
+P: Program
+Load(P) : State
+
+S0 -> S1 - I/O -> S2  -> ...
+               -> S2' -> ...
+               -> S2' -> ...              
+
+
+
+sem(P): State * (State -> option Event -> State -> Prop)

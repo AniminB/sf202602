@@ -1,0 +1,45 @@
+1. Interaction Tree
+   - concept
+   - key operations: bind, translate, interp, iter, state_monad
+   - examples
+
+2. CRIS Modules & Semantics
+
+   - module local state
+   - call
+   - i/o
+   - choose, assume(ub), guarantee(nb)
+   - interpretation/behavior
+
+3. Contextual Refinement & Simulation
+
+   - simulation rules
+   - steps 
+   - induction
+   - coinduction
+   - verification examples
+   
+4. Separation Logic Basics
+
+   - motivating with cell
+   - PCM (resource algebra)
+   - iProp: PCM -> Prop
+
+5. CRIS
+
+   - Choose/Take
+   - Assume/Guarantee
+   - motivating example verification
+
+6. Advanced Resource Algebras
+   - ghost map with examples
+   - mono list/nat with examples
+
+
+
+
+
+
+
+
+
