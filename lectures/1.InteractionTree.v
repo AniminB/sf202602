@@ -1,4 +1,4 @@
-Require Import String.
+Require Import String Program.
 
 Variant SysEvent : Type -> Type :=
 | sys_f (arg: nat) : SysEvent string
@@ -47,13 +47,38 @@ CoFixpoint interp {E: Type -> Type} {A R: Type}
 
 (** State Monad **)
 
-Variant StateEvent : Type -> Type :=
-| Put (n: nat) : StateEvent unit
-| Get : StateEvent nat
+Variant StateEvent {K V: Type} : Type -> Type :=
+| Put (k: K) (v: V) : StateEvent unit
+| Get (k: K) : StateEvent (option V)
 .
 
 Definition sumE (E1 E2: Type -> Type) : Type -> Type :=
   fun A => (E1 A + E2 A)%type.
+
+CoFixpoint interp_state {E K V S R}
+  (put: K -> V -> S -> itree E (S * unit))
+  (get: K -> S -> itree E (S * V))
+  (t: itree (sumE E StateEvent) R)
+  (s: S)
+  : itree E R
+  :=
+  match t with
+  | Ret r => Ret r
+  | Tau t' => Tau (interp_state put get t' s)
+  | Vis (inl e) c => Vis e (fun a => interp_state put get (c a) s)
+  | Vis (inr (Put k v)) c => bind (put k v s) (fun '(s',_) => interp_state put get (c tt) s')
+  | Vis (inr (Get k)) c => bind (get k s) (fun '(s',v) => interp_state put get (c v) s')
+  end.
+
+  
+
+
+  
+
+
+
+
+
 
 Definition put {E} (n: nat) : bool -> itree E (bool * unit) :=
   fun st =>
@@ -66,11 +91,6 @@ Definition get {E} : bool -> itree E (bool * nat) :=
   fun st =>
     Ret (if st then (st, 1) else (st, 0)).
 
-Definition interp_state E S R
-  (puti: nat -> S -> itree E (S * unit))
-  (geti: S -> itree E (S * nat))
-  (t: itree (sumE E StateEvent) R)
-  : itree E R.
 
   
 
