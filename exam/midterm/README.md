@@ -2,7 +2,7 @@
 
 - 시간: 10월 31일 (토), 2pm ~ 7pm (시간제한 없음)
 - 장소: 소프트웨어 실습실 (302동 311-1호)
-- 범위: 시험 전 수업시간에 다룬 내용 중 IndProp.v 까지의 내용
+- 범위: 시험 전 수업시간에 다룬 내용 중 software foundation 1권에 해당하는 부분 (itree/CRIS로 넘어오기 전)
 - 형식: Rocq 코드를 직접 작성하여 온라인으로 제출
 - 인터넷 접속을 제한하는 [Safe exam browser(SEB)](https://safeexambrowser.org/news_en.html)를 사용할 예정입니다.
 - 시험 때 저희가 제공하는 환경 내에서 Rocq 컴파일을 돌려볼 수 있습니다.
