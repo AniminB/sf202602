@@ -57,17 +57,31 @@ Definition sumE (E1 E2: Type -> Type) : Type -> Type :=
 
 CoFixpoint interp_state {E K V S R}
   (put: K -> V -> S -> itree E (S * unit))
-  (get: K -> S -> itree E (S * V))
-  (t: itree (sumE E StateEvent) R)
+  (get: K -> S -> itree E (S * option V))
+  (t: itree (sumE E (@StateEvent K V)) R)
   (s: S)
   : itree E R
   :=
   match t with
   | Ret r => Ret r
   | Tau t' => Tau (interp_state put get t' s)
-  | Vis (inl e) c => Vis e (fun a => interp_state put get (c a) s)
-  | Vis (inr (Put k v)) c => bind (put k v s) (fun '(s',_) => interp_state put get (c tt) s')
-  | Vis (inr (Get k)) c => bind (get k s) (fun '(s',v) => interp_state put get (c v) s')
+  | @Vis _ _ A e c =>
+    match e with
+    | inl e => Vis e (fun a => interp_state put get (c a) s)
+    | inr e =>
+      let h : itree E (S * A) :=
+        match e in StateEvent A return itree E (S * A) with
+        | Put k v => put k v s
+        | Get k => get k s
+        end in
+      (* Guard resuming the interpreter with Tau after a handled event. *)
+      (cofix handle (h: itree E (S * A)) : itree E R :=
+         match h with
+         | Ret (s', a) => Tau (interp_state put get (c a) s')
+         | Tau h' => Tau (handle h')
+         | Vis e k => Vis e (fun a => handle (k a))
+         end) h
+    end
   end.
 
   
@@ -94,7 +108,6 @@ Definition get {E} : bool -> itree E (bool * nat) :=
 
   
 
-   - key operations: bind, translate, iter, interp, state_monad
-
+(* key operations: bind, translate, iter, interp, state_monad *)
 
 
