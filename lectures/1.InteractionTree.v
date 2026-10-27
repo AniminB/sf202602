@@ -18,13 +18,15 @@ Arguments Ret {E R}.
 Arguments Tau {E R}.
 Arguments Vis {E R A}.
 
-CoFixpoint bind {E: Type->Type} {R0 R: Type}
+(* Keep the continuation outside the cofixpoint so guarded callers can use bind. *)
+Definition bind {E: Type->Type} {R0 R: Type}
   (t: itree E R0) (s: R0 -> itree E R) : itree E R :=
-  match t with
-  | Ret r => s r
-  | Tau t' => Tau (bind t' s)
-  | @Vis _ _ A e k => Vis e (fun a => bind (k a) s)
-  end.
+  (cofix go (t: itree E R0) : itree E R :=
+    match t with
+    | Ret r => s r
+    | Tau t' => Tau (go t')
+    | @Vis _ _ A e k => Vis e (fun a => go (k a))
+    end) t.
 
 CoFixpoint translate {E1 E2: Type -> Type} {R}
   (f: forall A, E1 A -> E2 A) (t: itree E1 R) : itree E2 R :=
@@ -65,23 +67,12 @@ CoFixpoint interp_state {E K V S R}
   match t with
   | Ret r => Ret r
   | Tau t' => Tau (interp_state put get t' s)
-  | @Vis _ _ A e c =>
-    match e with
-    | inl e => Vis e (fun a => interp_state put get (c a) s)
-    | inr e =>
-      let h : itree E (S * A) :=
-        match e in StateEvent A return itree E (S * A) with
-        | Put k v => put k v s
-        | Get k => get k s
-        end in
-      (* Guard resuming the interpreter with Tau after a handled event. *)
-      (cofix handle (h: itree E (S * A)) : itree E R :=
-         match h with
-         | Ret (s', a) => Tau (interp_state put get (c a) s')
-         | Tau h' => Tau (handle h')
-         | Vis e k => Vis e (fun a => handle (k a))
-         end) h
-    end
+  | Vis (inl e) c => Vis e (fun a => interp_state put get (c a) s)
+  | Vis (inr e) c =>
+    match e in StateEvent A return (A -> itree _ R) -> itree E R with
+    | Put k v => fun c => bind (put k v s) (fun '(s',_) => Tau (interp_state put get (c tt) s'))
+    | Get k => fun c => bind (get k s) (fun '(s',v) => Tau (interp_state put get (c v) s'))
+    end c
   end.
 
   
