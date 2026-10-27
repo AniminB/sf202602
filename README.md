@@ -23,6 +23,8 @@
 - Oct. 6:
     + Assignments 1, 2, 3 are uploaded.
     + Midterm exam will be held in Oct. 31th. Please check instructions through [this page](exam/midterm/README.md).
+- Oct. 27:
+    + Details about the midterm exam have been announced in the [README](exam/midterm/README.md).
 
 ## Assignments (optional)
 

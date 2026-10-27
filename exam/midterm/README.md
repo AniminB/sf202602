@@ -1,9 +1,13 @@
 # 중간고사
 
 - 시간: 10월 31일 (토), 2pm ~ 7pm (시간제한 없음)
-- 장소: TBD
+- 장소: 소프트웨어 실습실 (302동 311-1호)
+- 범위: 시험 전 수업시간에 다룬 내용 중 IndProp.v 까지의 내용
+- 형식: Rocq 코드를 직접 작성하여 온라인으로 제출
 - 인터넷 접속을 제한하는 [Safe exam browser(SEB)](https://safeexambrowser.org/news_en.html)를 사용할 예정입니다.
-- 자세한 정보는 추후 공지하겠습니다.
+- 시험 때 저희가 제공하는 환경 내에서 Rocq 컴파일을 돌려볼 수 있습니다.
+    + 환경: 웹버전 VS Code + [vsrocq](https://github.com/rocq-prover/vsrocq) 플러그인 (다른 환경 사용 불가)
+    + 시험 때 제공될 SEB 환경에 들어가시면 별다른 설정 없이 바로 사용하실 수 있습니다.
 
 ## 준비물
 
