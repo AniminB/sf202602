@@ -22,8 +22,7 @@ submission:
 
 clean: Makefile.coq
 	$(MAKE) -f Makefile.coq clean
-	rm _CoqProject Makefile.coq
+	rm Makefile.coq
 
-Makefile.coq: Makefile $(PFILES) $(EFILES)
-	(echo -R . Assignment $(DFILES) $(PFILES) $(EFILES)) > _CoqProject
+Makefile.coq: Makefile _CoqProject $(PFILES) $(EFILES)
 	coq_makefile -f _CoqProject -o Makefile.coq

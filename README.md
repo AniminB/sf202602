@@ -68,6 +68,29 @@
 
 - It is likely that you will use your own laptop in mid-term and final exam. If you do not have a laptop or cannot install Coq on it, please let the TA know.
 
+## CRIS
+
+First, set up the git submodules for CRIS and CRIS examples by:
+
+```sh
+git submodule update --init --recursive
+```
+
+Install OPAM, then run:
+
+```sh
+opam switch create . --no-install # Optional if you want to set up the local development environment. Omitting it will install globally.
+./CRIS-examples/CRIS/configure
+cd CRIS-examples
+make # `make -j`, `make -j8`, ... are also possible for parallel compilation.
+```
+
+This will automatically install Rocq 9.0.0 as well as necessary dependencies for CRIS.
+
+If you install it with `opam switch create . --no-install`, then you'd probably need to:
+- run `eval $(opam env)$` on your terminal to put the Rocq compiler on the $PATH
+- add some settings to your IDE to properly detect the Rocq compiler
+
 ## Tactics
 
 - You can look up manuals about [Basic tactics](https://coq.inria.fr/doc/V8.18.0/refman/proofs/writing-proofs/index.html), [Automatic solver](https://coq.inria.fr/refman/proofs/automatic-tactics/index.html), and [Ltac](https://coq.inria.fr/refman/proof-engine/ltac.html) for more information about proof techniques.

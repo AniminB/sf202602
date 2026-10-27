@@ -1,0 +1,3 @@
+[submodule "CRIS-examples"]
+	path = CRIS-examples
+	url = git@github.com:snu-sf/CRIS-examples.git

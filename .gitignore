@@ -1,0 +1,13 @@
+_opam/
+
+*.vo
+*.vio
+*.v.d
+*.glob
+.*.aux
+*.vok
+*.vos
+
+.lia.cache
+.nia.cache
+.coqdeps.d
