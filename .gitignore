@@ -11,3 +11,7 @@ _opam/
 .lia.cache
 .nia.cache
 .coqdeps.d
+
+Makefile.coq
+Makefile.coq.conf
+.Makefile.coq.d
