@@ -1,0 +1,29 @@
+3. Refinement
+
+- Impl: Concrete Program, say P
+
+- Spec: Abstract program, say A
+
+- Correctness: Contextual Refinement
+
+  P <ctx= A  iff forall C: Mod, Beh(P o C) <= Beh(A o C)
+
+- Proof Technique: Simulation Technique
+
+  A : S0 -> S1 -> S2 -> S3 -> ...
+
+  P : T0 -> T1 -> T2 -> T3 -> ...
+
+  1. Define a Simulation Relation
+     R : Source State -> Target State -> Prop
+
+  2. Prove R S0 T0
+
+  3. forall S T T' e, R S T -> (T steps to T' with e) ->
+     exists S', S steps to S' with e /\ R S' T'
+
+
+
+
+
+

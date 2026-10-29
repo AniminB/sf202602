@@ -14,7 +14,8 @@ f: Any.t -> itree crisE Any.t
 
 crisE = coreE + callE + pgE
 
+SMod -> Mod 
 
+M1,M2,M3 -> C(M1) o C(M2) o C(M3)
 
-
-
+Mod -> Global Interaction -> set of traces

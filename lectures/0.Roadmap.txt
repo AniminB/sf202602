@@ -6,8 +6,8 @@
 
    - module local state
    - call
-   - i/o
-   - choose, assume(ub), guarantee(nb)
+   - i/o, choose
+   - suguar: assume(P) -> ub
    - interpretation/behavior
 
 3. Contextual Refinement & Simulation
