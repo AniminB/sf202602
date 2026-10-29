@@ -1,7 +1,6 @@
 1. Interaction Tree
    - concept
    - key operations: bind, translate, interp, iter, state_monad
-   - examples
 
 2. CRIS Modules & Semantics
 

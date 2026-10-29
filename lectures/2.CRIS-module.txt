@@ -1,0 +1,20 @@
+2. CRIS modules and semantics
+
+P := M1 + M2 + ... + Mn
+
+M := (kv storage, [main], f1, ...,fn)
+
+WMem
+
+Net
+
+Sch: yield
+
+f: Any.t -> itree crisE Any.t
+
+crisE = coreE + callE + pgE
+
+
+
+
+

@@ -75,8 +75,6 @@ CoFixpoint interp_state {E K V S R}
     end c
   end.
 
-  
-
 
   
 
