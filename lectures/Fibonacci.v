@@ -95,50 +95,50 @@ Section Modules.
 
   (** The source has no state.  Every entry in the target memo table
       contains the Fibonacci number at its own index. *)
-  Definition Ist : ist_type Σ :=
-    fun st_s st_t =>
-      (⌜st_s = ∅⌝ ∗ ∃ xs : cache,
-        ⌜st_t = {[memo # xs↑]} /\ cache_ok xs⌝)%I.
+  Definition Ist (STATE : stateGS Σ) : iProp Σ :=
+    (∃ xs : cache, memo ↦tgt xs↑ ∗ ⌜cache_ok xs⌝)%I.
 
   Section Correctness.
+    Context `{STATE : !stateGS Σ}.
     Context (R_s R_t : Type) (Ep : coPset * coPset).
     Context (g : forall R_s R_t,
       retr_type Σ R_s R_t -> bool -> bool ->
-      gmap key (option Any.t) * itree crisE R_s ->
-      gmap key (option Any.t) * itree crisE R_t -> iProp Σ).
+      itree crisE R_s -> itree crisE R_t -> iProp Σ).
     Context (RR : retr_type Σ R_s R_t).
 
     Local Notation sim :=
       (wsim (sandbox_fnsemmap source.(Mod.fnsems))
-        (sandbox_fnsemmap target.(Mod.fnsems)) Ist Ep g R_s R_t RR).
+        (sandbox_fnsemmap target.(Mod.fnsems)) (Ist STATE)
+        Ep g R_s R_t RR).
 
     (** A continuation form of correctness lets induction inline the two
         recursive target calls while the source stays at its return. *)
     Lemma sim_call n :
-      forall ps pt st_s (xs : cache) i_s (k_t : Any.t -> itree crisE R_t),
+      forall ps pt (xs : cache) i_s (k_t : Any.t -> itree crisE R_t),
       cache_ok xs ->
-      (∀ ys : cache, ⌜cache_ok ys⌝ -∗
-        sim ps true (st_s, i_s)
-          ({[memo # ys↑]}, k_t (fib n)↑)) -∗
-      sim ps pt (st_s, i_s)
-        ({[memo # xs↑]},
-         r <- trigger (Call (fn_name fibonacci) n↑);; k_t r).
+      memo ↦tgt xs↑ -∗
+      (∀ ys : cache, ⌜cache_ok ys⌝ -∗ memo ↦tgt ys↑ -∗
+        sim ps true i_s (k_t (fib n)↑)) -∗
+      sim ps pt i_s
+        (r <- trigger (Call (fn_name fibonacci) n↑);; k_t r).
     Proof.
       induction n using (well_founded_induction lt_wf).
-      intros ps pt st_s xs i_s k_t Hxs.
-      iIntros "CONT".
+      intros ps pt xs i_s k_t Hxs.
+      iIntros "MEM CONT".
       cInlineT. rewrite /cfunU /target_body.
       cStepsT. destruct (xs !! n) as [v|] eqn:Hentry.
       - rewrite (Hxs n v Hentry).
-        cStepsT. iApply "CONT". done.
+        cStepsT. iApply ("CONT" with "[] MEM"). done.
       - destruct n as [|[|m]]; cStepsT.
-        + iApply "CONT". iPureIntro. exact (cache_ok_insert 0 Hxs).
-        + iApply "CONT". iPureIntro. exact (cache_ok_insert 1 Hxs).
-        + iApply (H (S m) ltac:(lia) ps true st_s xs i_s _ Hxs).
-          iIntros (ys) "%Hys". cStepsT.
-          iApply (H m ltac:(lia) ps true st_s ys i_s _ Hys).
-          iIntros (zs) "%Hzs". cStepsT.
-          iApply "CONT". iPureIntro.
+        + iApply ("CONT" with "[] MEM").
+          iPureIntro. exact (cache_ok_insert 0 Hxs).
+        + iApply ("CONT" with "[] MEM").
+          iPureIntro. exact (cache_ok_insert 1 Hxs).
+        + iApply (H (S m) ltac:(lia) ps true xs i_s _ Hxs with "MEM").
+          iIntros (ys) "%Hys MEM". cStepsT.
+          iApply (H m ltac:(lia) ps true ys i_s _ Hys with "MEM").
+          iIntros (zs) "%Hzs MEM". cStepsT.
+          iApply ("CONT" with "[] MEM"). iPureIntro.
           exact (cache_ok_insert (S (S m)) Hzs).
     Qed.
   End Correctness.
@@ -148,33 +148,36 @@ Section Modules.
   Proof.
     cStartFunSim. rewrite /source_body /target_body.
     cStepsS.
-    destruct (Any.downcast arg) as [n|];
+    destruct (Any.downcast arg) as [n|] eqn:Harg;
       cStepsS; try contradiction.
-    iDestruct "IST" as "(-> & %xs & -> & %Hxs)".
-    cStepsT. destruct (xs !! n) as [v|] eqn:Hentry.
+    iDestruct "IST" as (xs) "(MEM & %Hxs)".
+    cStepsT. rewrite Harg. cStepsT.
+    destruct (xs !! n) as [v|] eqn:Hentry.
     - rewrite (Hxs n v Hentry). cStepsT.
-      cStep. iSplit; first done. iSplit; first done. iExists xs. done.
+      cStep. iSplit; first done. iExists xs. iFrame. done.
     - destruct n as [|[|m]]; cStepsT.
-      + cStep. iSplit; first done. iSplit; first done.
-        iExists _. iPureIntro. split; first done.
+      + cStep. iSplit; first done.
+        iExists _. iFrame. iPureIntro.
         exact (cache_ok_insert 0 Hxs).
-      + cStep. iSplit; first done. iSplit; first done.
-        iExists _. iPureIntro. split; first done.
+      + cStep. iSplit; first done.
+        iExists _. iFrame. iPureIntro.
         exact (cache_ok_insert 1 Hxs).
-      + iApply (sim_call _ _ _ (S m) _ _ _ _ _ Hxs).
-        iIntros (ys) "%Hys". cStepsT.
-        iApply (sim_call _ _ _ m _ _ _ _ _ Hys).
-        iIntros (zs) "%Hzs". cStepsT.
-        cStep. iSplit; first done. iSplit; first done.
-        iExists _. iPureIntro. split; first done.
+      + iApply (sim_call _ _ _ (S m) _ _ _ _ Hxs with "MEM").
+        iIntros (ys) "%Hys MEM". cStepsT.
+        iApply (sim_call _ _ _ m _ _ _ _ Hys with "MEM").
+        iIntros (zs) "%Hzs MEM". cStepsT.
+        cStep. iSplit; first done.
+        iExists _. iFrame. iPureIntro.
         exact (cache_ok_insert (S (S m)) Hzs).
   Qed.
 
   Lemma sim : ⊢ ISim.t open source target Ist.
   Proof.
     cStartModSim.
-    - iIntros "_". iSplit; first done.
-      iExists _. iPureIntro. split; first done.
+    - iPoseProof (state_init_tgt_acc _ _ memo with "TGT") as
+        (ov) "(%Hmemo & MEM & _)".
+      { set_solver. }
+      simpl_map. subst ov. iExists (∅ : cache). iFrame. iPureIntro.
       apply cache_ok_initial.
     - iApply sim_fibonacci.
   Qed.
